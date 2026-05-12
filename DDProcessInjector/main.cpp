@@ -30,15 +30,30 @@ int FindProcessId(const wchar_t* processName)
 
 int wmain(int argc, wchar_t** argv)
 {
-	if (argc != 3)
+	if (argc != 2)
 	{
-		std::wcerr << L"Usage: Injector.exe <process_name.exe> <dll_path>\n";
-		std::wcerr << L"Example: Injector.exe SomeApplication.exe C:\\Path\\Payload.dll\n";
+		std::wcerr << L"Usage: Injector.exe <process_name.exe>\n";
+		std::wcerr << L"Example: Injector.exe SomeApplication.exe";
 		return -1;
 	}
 
 	const wchar_t* targetProcessName = argv[1];
-	const wchar_t* targetDll = argv[2];
+	wchar_t fullDllPath[MAX_PATH]{};
+
+	DWORD pathLen = GetFullPathNameW(L"payloads\\payload.dll", MAX_PATH, fullDllPath, nullptr);
+	if (pathLen == 0 || pathLen >= MAX_PATH)
+	{
+		std::wcerr << L"GetFullPathNameW failed. Error: " << GetLastError() << L"\n";
+		return -1;
+	}
+
+	if (GetFileAttributesW(fullDllPath) == INVALID_FILE_ATTRIBUTES)
+	{
+		std::wcerr << L"DLL does not exist: '" << fullDllPath << L"'. Injector assumes that payloads/payload.dll exists in its directory." L"\n";
+		return -1;
+	}
+
+	const wchar_t* targetDll = fullDllPath;
 	int targetDllByteCount = (wcslen(targetDll) + 1) * sizeof(wchar_t);
 
 	// === Find processes and modules ===
