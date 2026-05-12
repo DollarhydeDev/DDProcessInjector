@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DDProcessInjector/DDProcessInjector.vcxproj" Id="3958cb5f-9ac5-40b4-b031-4d000ae6cdb7" />
+</Solution>
